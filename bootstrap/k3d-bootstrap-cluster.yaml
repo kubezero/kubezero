@@ -1,0 +1,23 @@
+---
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: kubezero
+
+# Cluster resources.
+servers: 1
+agents: 1
+
+# To access ArgoCD if needed.
+ports:
+  - port: 80:80
+    nodeFilters:
+      - loadbalancer
+
+# Auto deployed manifests.
+files:
+- description: Bootstrap
+  source: kubezero-bootstrap-manifests.yaml
+  destination: k3s-manifests/kubezero.yaml
+  nodeFilters:
+  - "server:*"

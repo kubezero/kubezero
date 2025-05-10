@@ -1,0 +1,57 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitops-controller
+  namespace: kubezero
+  annotations:
+    argocd.argoproj.io/sync-wave: '50'
+spec:
+  project: controller
+  source:
+    repoURL: https://github.com/DevOpsHiveHQ/kubezero
+    path: controller
+    targetRevision: main
+  destination:
+    name: in-cluster
+    namespace: kubezero
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        maxDuration: 5m0s
+        factor: 2
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitops-registry
+  namespace: kubezero
+  annotations:
+    argocd.argoproj.io/sync-wave: '50'
+spec:
+  project: controller
+  source:
+    repoURL: https://github.com/DevOpsHiveHQ/kubezero
+    path: registry
+    targetRevision: main
+    directory:
+      recurse: true
+      include: '*/gitops.yaml'
+  destination:
+    name: in-cluster
+    namespace: kubezero
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        maxDuration: 5m0s
+        factor: 2

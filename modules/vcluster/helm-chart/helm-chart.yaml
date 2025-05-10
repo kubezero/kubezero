@@ -1,0 +1,14 @@
+---
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: vcluster
+name: vcluster
+repo: https://charts.loft.sh
+version: 0.24.1
+releaseName: vcluster
+namespace: vcluster
+repositoryConfig: ''
+IncludeCRDs: true
+additionalValuesFiles:
+  - helm-chart/values-vcluster.yaml

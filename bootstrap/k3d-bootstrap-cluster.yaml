@@ -8,6 +8,12 @@ metadata:
 servers: 1
 agents: 1
 
+# API server.
+kubeAPI:
+  host: "0.0.0.0"
+  hostIP: "127.0.0.1"
+  hostPort: "6445"
+
 # To access ArgoCD if needed.
 ports:
   - port: 80:80
@@ -16,8 +22,8 @@ ports:
 
 # Auto deployed manifests.
 files:
-- description: Bootstrap
-  source: kubezero-bootstrap-manifests.yaml
-  destination: k3s-manifests/kubezero.yaml
-  nodeFilters:
-  - "server:*"
+  - description: Bootstrap
+    source: kubezero-bootstrap-manifests.yaml
+    destination: k3s-manifests/kubezero.yaml
+    nodeFilters:
+    - "server:*"

@@ -1,0 +1,26 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-cd
+  namespace: kubezero
+  annotations:
+    argocd.argoproj.io/sync-wave: '50'
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: controller
+  source:
+    repoURL: https://github.com/DevOpsHiveHQ/kubezero
+    path: controller/argo-cd
+    targetRevision: main
+  destination:
+    name: in-cluster
+    namespace: kubezero
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - Replace=true

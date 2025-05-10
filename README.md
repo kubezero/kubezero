@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://devopshive.net/" style="display: block; padding: 1em 0;">
+  <a href="https://kubezero.io/" style="display: block; padding: 1em 0;">
     <img width="128px" alt="KubeZero Logo" border="0" src="https://devopshive.net/projects/kubezero-logo.svg"/>
   </a>
 </p>
@@ -126,9 +126,26 @@ KubeZero could be used to build applications and infrastructure in different pat
 - **Three Clusters** - Management cluster, production cluster, and non-production cluster with multi-virtual clusters
 - **Four Clusters** - Management cluster, production, staging, and development clusters
 
+## Bootstrap
+
+To bootstrap KubeZero, run K3d locally:
+
+```shell
+k3d cluster create --config bootstrap/k3d-bootstrap-cluster.yaml
+```
+
+It will start a local cluster with:
+
+- Argo CD.
+- Crossplane.
+- KubeZero GitOps resources.
+
+Once all resources are ready, Argo CD can be accessed via:
+
+http://gitops.local.kubezero.io
+
 ## TODO
 
-- Create the IaC for the bootstrap cluster.
 - Create the IaC for the management cluster.
 - Create the IaC for the workloads cluster.
 - Add a full working example.

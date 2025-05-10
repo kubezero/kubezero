@@ -1,18 +1,19 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: crossplane
-  namespace: argo-cd
+  namespace: kubezero
   annotations:
-    argocd.argoproj.io/sync-wave: '60'
+    argocd.argoproj.io/sync-wave: '50'
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: management
+  project: controller
   source:
     repoURL: https://github.com/DevOpsHiveHQ/kubezero
-    path: management/crossplane
-    targetRevision: HEAD
+    path: controller/crossplane
+    targetRevision: main
   destination:
     name: in-cluster
     namespace: crossplane-system

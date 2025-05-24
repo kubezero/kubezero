@@ -2,11 +2,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-commonAnnotations:
-  argocd.argoproj.io/sync-wave: "4"
-
 resources:
-  - ./namespace.yaml
+  - argo-cd-cluster-secret
 
 generators:
   - ./helm-chart

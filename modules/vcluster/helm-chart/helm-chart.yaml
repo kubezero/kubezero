@@ -1,12 +1,20 @@
----
 apiVersion: builtin
 kind: HelmChartInflationGenerator
 metadata:
   name: vcluster
+  annotations:
+    argocd.argoproj.io/sync-wave: "70"
 name: vcluster
 repo: https://charts.loft.sh
-version: 0.24.1
+version: 0.25.0
 releaseName: vcluster
-namespace: vcluster
-repositoryConfig: ''
 IncludeCRDs: true
+valuesInline:
+  exportKubeConfig:
+    additionalSecrets:
+      - name: vcluster-kubeconfig
+        server: https://vcluster.vcluster:443
+        serviceAccount:
+          name: "default"
+          namespace: "default"
+          clusterRole: "cluster-admin"

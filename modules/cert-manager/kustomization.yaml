@@ -2,8 +2,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: cert-manager
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "1"
 
 resources:
   - ./namespace.yaml
   - ./clusterissuer-letsencrypt.yaml
+
+generators:
+  - ./helm-chart

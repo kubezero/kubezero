@@ -1,0 +1,48 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vcluster-dev
+  namespace: kubezero
+  annotations:
+    argocd.argoproj.io/sync-wave: '100'
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  project: default
+  source:
+    repoURL: https://github.com/kubezero/kubezero
+    targetRevision: main
+    path: registry/dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - Replace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook-app-vcluster-dev
+  namespace: kubezero
+  annotations:
+    argocd.argoproj.io/sync-wave: '120' # Ensure this app syncs after vcluster-dev
+spec:
+  destination:
+    name: vcluster-dev # <- Matches the Secret's `data.name`
+    namespace: default
+  project: default
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps
+    targetRevision: HEAD
+    path: guestbook
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - Replace=true

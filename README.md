@@ -149,3 +149,16 @@ http://gitops.local.kubezero.io
 - Create the IaC for the management cluster.
 - Create the IaC for the workloads cluster.
 - Add a full working example.
+
+## Directory Structure
+
+| Directory      | Purpose                                      |
+|----------------|----------------------------------------------|
+| modules/       | Reusable Kustomize/Helm bundles              |
+| stacks/        | Environment/cluster composition of modules   |
+| registry/      | GitOps deployment targets (environments)     |
+| controller/    | ArgoCD/Crossplane bootstrap & operator logic |
+| bootstrap/     | Local one-time cluster bootstrap             |
+| crds/          | KubeZero CRDs and operator manifests         |
+| cli/           | KubeZero CLI tool (future)                   |
+| operator/      | KubeZero Operator (future)                   |

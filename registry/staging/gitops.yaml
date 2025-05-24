@@ -30,10 +30,12 @@ metadata:
   name: guestbook-app-vcluster-dev
   namespace: kubezero
   annotations:
-    argocd.argoproj.io/sync-wave: '120' # Ensure this app syncs after vcluster-staging
+    # Ensure this app syncs after vcluster-staging
+    argocd.argoproj.io/sync-wave: '120'
 spec:
   destination:
-    name: vcluster-staging # <- Matches the Secret's `data.name`
+    # <- Matches the Secret's `data.name`
+    name: vcluster-staging
     namespace: default
   project: default
   source:

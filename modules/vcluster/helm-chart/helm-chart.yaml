@@ -1,3 +1,4 @@
+---
 apiVersion: builtin
 kind: HelmChartInflationGenerator
 metadata:

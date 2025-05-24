@@ -34,7 +34,8 @@ metadata:
   namespace: kubezero
 spec:
   destination:
-    server: https://kubernetes.default.svc # In-cluster
+    # Ensure this app syncs after vcluster-dev
+    server: https://kubernetes.default.svc
     namespace: kubezero
   project: management
   source:

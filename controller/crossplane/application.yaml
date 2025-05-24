@@ -11,7 +11,7 @@ metadata:
 spec:
   project: controller
   source:
-    repoURL: https://github.com/DevOpsHiveHQ/kubezero
+    repoURL: https://github.com/kubezero/kubezero
     path: controller/crossplane
     targetRevision: main
   destination:

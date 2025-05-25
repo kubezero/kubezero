@@ -1,0 +1,30 @@
+---
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: vault
+name: vault
+repo: https://helm.releases.hashicorp.com
+version: 0.28.0
+releaseName: vault
+namespace: vault
+IncludeCRDs: true
+values:
+  server:
+    extraEnvironmentVars:
+      - name: VAULT_LOCAL_CONFIG
+        value: |
+          ui = true
+
+          # use file storage
+          storage "file" {
+            path = "/vault/data"
+          }
+
+          # use a simple Shamir seal for now (not for production!)
+          seal "shamir" {}
+
+          listener "tcp" {
+            address     = "0.0.0.0:8200"
+            tls_disable = 1
+          }

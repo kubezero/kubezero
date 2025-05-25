@@ -1,0 +1,5 @@
+---
+# TODO: Remove this later .. just for testing locally
+controller:
+  service:
+    type: NodePort

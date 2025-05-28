@@ -1,0 +1,88 @@
+---
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: vcluster
+ValuesInline:
+  experimental:
+    deploy:
+      host:
+        # TODO: Review if we can make it in 1 step using PushSecret template.
+        manifestsTemplate: |
+          ---
+          # Push the vCluster credentails to KubeZero namespace.
+          apiVersion: external-secrets.io/v1alpha1
+          kind: PushSecret
+          metadata:
+            name: argo-cd-{{ .Release.Name }}-credentials
+            namespace: {{ .Release.Name }}
+          spec:
+            refreshInterval: 1s
+            secretStoreRefs:
+              - name: kubezero-management
+                kind: ClusterSecretStore
+            selector:
+              secret:
+                name: vc-{{ .Release.Name }}
+            data:
+              - match:
+                  secretKey: certificate-authority
+                  remoteRef:
+                    remoteKey: argo-cd-{{ .Release.Name }}-credentials
+                    property: caData
+              - match:
+                  secretKey: client-certificate
+                  remoteRef:
+                    remoteKey: argo-cd-{{ .Release.Name }}-credentials
+                    property: certData
+              - match:
+                  secretKey: client-key
+                  remoteRef:
+                    remoteKey: argo-cd-{{ .Release.Name }}-credentials
+                    property: keyData
+          ---
+          # Create a Argo CD cluster config (which is a secret with certain label).
+          apiVersion: external-secrets.io/v1
+          kind: ExternalSecret
+          metadata:
+            name: argo-cd-{{ .Release.Name }}
+            namespace: kubezero
+          spec:
+            refreshInterval: 1s
+            secretStoreRef:
+              name: kubezero-management
+              kind: ClusterSecretStore
+            target:
+              template:
+                engineVersion: v2
+                metadata:
+                  annotations:
+                    managed-by: external-secrets
+                  labels:
+                    argocd.argoproj.io/secret-type: cluster
+                data:
+                  name: {{ .Release.Name }}
+                  server: https://{{ .Release.Name }}.{{ .Release.Namespace }}.svc:443
+                  config: |
+                    {
+                      "tlsClientConfig": {
+                        "insecure": false,
+                        "caData": "{{ "{{" }} .caData | b64enc {{ "}}" }}",
+                        "certData": "{{ "{{" }} .certData | b64enc {{ "}}" }}",
+                        "keyData": "{{ "{{" }} .keyData | b64enc {{ "}}" }}",
+                        "serverName": "{{ .Release.Name }}"
+                      }
+                    }
+            data:
+            - secretKey: caData
+              remoteRef:
+                key: argo-cd-{{ .Release.Name }}-credentials
+                property: caData
+            - secretKey: certData
+              remoteRef:
+                key: argo-cd-{{ .Release.Name }}-credentials
+                property: certData
+            - secretKey: keyData
+              remoteRef:
+                key: argo-cd-{{ .Release.Name }}-credentials
+                property: keyData

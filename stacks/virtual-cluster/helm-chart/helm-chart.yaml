@@ -3,21 +3,23 @@ apiVersion: builtin
 kind: HelmChartInflationGenerator
 metadata:
   name: vcluster
-ValuesInline:
+valuesInline:
   experimental:
     deploy:
       host:
-        # TODO: Review if we can make it in 1 step using PushSecret template.
+        # TODO: Refactor using PushSecret template only (no need for ExternalSecret) when this issue is solved:
+        # https://github.com/external-secrets/external-secrets/issues/3443
         manifestsTemplate: |
           ---
-          # Push the vCluster credentails to KubeZero namespace.
+          # Push the vCluster credentails to KubeZero ClusterSecretStore
+          # which will save it to KubeZero namespace.
           apiVersion: external-secrets.io/v1alpha1
           kind: PushSecret
           metadata:
             name: argo-cd-{{ .Release.Name }}-credentials
             namespace: {{ .Release.Name }}
           spec:
-            refreshInterval: 1s
+            refreshInterval: 5m
             secretStoreRefs:
               - name: kubezero-management
                 kind: ClusterSecretStore
@@ -41,14 +43,15 @@ ValuesInline:
                     remoteKey: argo-cd-{{ .Release.Name }}-credentials
                     property: keyData
           ---
-          # Create a Argo CD cluster config (which is a secret with certain label).
+          # Create an Argo CD cluster config (a secret with a specific label).
+          # https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters
           apiVersion: external-secrets.io/v1
           kind: ExternalSecret
           metadata:
             name: argo-cd-{{ .Release.Name }}
             namespace: kubezero
           spec:
-            refreshInterval: 1s
+            refreshInterval: 5m
             secretStoreRef:
               name: kubezero-management
               kind: ClusterSecretStore
@@ -67,9 +70,9 @@ ValuesInline:
                     {
                       "tlsClientConfig": {
                         "insecure": false,
-                        "caData": "{{ "{{" }} .caData | b64enc {{ "}}" }}",
-                        "certData": "{{ "{{" }} .certData | b64enc {{ "}}" }}",
-                        "keyData": "{{ "{{" }} .keyData | b64enc {{ "}}" }}",
+                        "caData": "{{ printf "{{ .caData | b64enc }}" }}",
+                        "certData": "{{ printf "{{ .certData | b64enc }}" }}",
+                        "keyData": "{{ printf "{{ .keyData | b64enc }}" }}",
                         "serverName": "{{ .Release.Name }}"
                       }
                     }

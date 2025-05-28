@@ -10,5 +10,3 @@ releaseName: vcluster
 namespace: vcluster
 repositoryConfig: ''
 IncludeCRDs: true
-# additionalValuesFiles:
-#   - helm-chart/values-vcluster.yaml

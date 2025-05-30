@@ -117,6 +117,10 @@ flowchart TD
   k8sManagement --"Manage"--> k8sProd
 ```
 
+## Docs
+
+- [KubeZero Packages](./packages/README.md)
+
 ## Patterns
 
 KubeZero could be used to build applications and infrastructure in different patterns ... more details on the [setup patterns](./docs/patterns.md) page.
@@ -147,5 +151,5 @@ http://gitops.local.kubezero.io
 ## TODO
 
 - Create the IaC for the management cluster.
-- Create the IaC for the workloads cluster.
+- Create the IaC for the physical workloads cluster.
 - Add a full working example.

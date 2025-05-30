@@ -1,0 +1,91 @@
+---
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: vcluster
+valuesInline:
+  experimental:
+    deploy:
+      host:
+        # TODO: Refactor using PushSecret template only (no need for ExternalSecret) when this issue is solved:
+        # https://github.com/external-secrets/external-secrets/issues/3443
+        manifestsTemplate: |
+          ---
+          # Push the vCluster credentails to KubeZero ClusterSecretStore
+          # which will save it to KubeZero namespace.
+          apiVersion: external-secrets.io/v1alpha1
+          kind: PushSecret
+          metadata:
+            name: argo-cd-{{ .Release.Name }}-credentials
+            namespace: {{ .Release.Name }}
+          spec:
+            refreshInterval: 5m
+            secretStoreRefs:
+              - name: kubezero-management
+                kind: ClusterSecretStore
+            selector:
+              secret:
+                name: vc-{{ .Release.Name }}
+            data:
+              - match:
+                  secretKey: certificate-authority
+                  remoteRef:
+                    remoteKey: argo-cd-{{ .Release.Name }}-credentials
+                    property: caData
+              - match:
+                  secretKey: client-certificate
+                  remoteRef:
+                    remoteKey: argo-cd-{{ .Release.Name }}-credentials
+                    property: certData
+              - match:
+                  secretKey: client-key
+                  remoteRef:
+                    remoteKey: argo-cd-{{ .Release.Name }}-credentials
+                    property: keyData
+          ---
+          # Create an Argo CD cluster config (a secret with a specific label).
+          # https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters
+          apiVersion: external-secrets.io/v1
+          kind: ExternalSecret
+          metadata:
+            name: argo-cd-{{ .Release.Name }}
+            namespace: kubezero
+          spec:
+            refreshInterval: 5m
+            secretStoreRef:
+              name: kubezero-management
+              kind: ClusterSecretStore
+            target:
+              template:
+                engineVersion: v2
+                metadata:
+                  annotations:
+                    managed-by: external-secrets
+                  labels:
+                    argocd.argoproj.io/secret-type: cluster
+                data:
+                  name: {{ .Release.Name }}
+                  server: https://{{ .Release.Name }}.{{ .Release.Namespace }}.svc:443
+                  config: |
+                    {
+                      "tlsClientConfig": {
+                        "insecure": false,
+                        "caData": "{{ printf "{{ .caData | b64enc }}" }}",
+                        "certData": "{{ printf "{{ .certData | b64enc }}" }}",
+                        "keyData": "{{ printf "{{ .keyData | b64enc }}" }}",
+                        "serverName": "{{ .Release.Name }}"
+                      }
+                    }
+            data:
+            - secretKey: caData
+              remoteRef:
+                key: argo-cd-{{ .Release.Name }}-credentials
+                property: caData
+            - secretKey: certData
+              remoteRef:
+                key: argo-cd-{{ .Release.Name }}-credentials
+                property: certData
+            - secretKey: keyData
+              remoteRef:
+                key: argo-cd-{{ .Release.Name }}-credentials
+                property: keyData

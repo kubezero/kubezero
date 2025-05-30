@@ -15,4 +15,4 @@ spec:
     - name: in-cluster
       namespace: crossplane-system
   sourceRepos:
-    - https://github.com/DevOpsHiveHQ/kubezero
+    - https://github.com/kubezero/kubezero

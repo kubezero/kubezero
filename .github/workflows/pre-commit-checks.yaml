@@ -1,0 +1,48 @@
+name: Pre-commit Checks
+
+on:
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install pre-commit
+        run: |
+          pip install pre-commit
+
+      - name: Run pre-commit hooks
+        run: |
+          pre-commit run --all-files
+
+      - name: Install gitleaks
+        uses: gitleaks/gitleaks-action@v2.3.3
+        with:
+          args: "detect --source . --no-git --redact"
+
+      - name: Install yamllint
+        run: |
+          pip install yamllint
+
+      - name: Run yamllint
+        run: |
+          yamllint .
+
+      - name: Run kubeconform linter
+        run: |
+          chmod +x .hooks/kubeconform.sh
+          ./.hooks/kubeconform.sh || exit 1
+
+      - name: Run kube-score static analysis
+        run: |
+          chmod +x .hooks/kube-score.sh
+          ./.hooks/kube-score.sh || exit 1

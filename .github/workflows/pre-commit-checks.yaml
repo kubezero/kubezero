@@ -11,16 +11,39 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+<<<<<<< HEAD
       - name: Install asdf & tools
         uses: asdf-vm/actions/install@v4
         
+=======
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install pre-commit
+        run: |
+          pip install pre-commit
+
+>>>>>>> ae029e2 (chore: add pre-commit checks workflow to enforce code quality and standards)
       - name: Run pre-commit hooks
         run: |
           pre-commit run --all-files
 
+<<<<<<< HEAD
       - name: Run gitleaks
         run: |
           gitleaks detect --source . --no-git --redact
+=======
+      - name: Install gitleaks
+        uses: gitleaks/gitleaks-action@v2.3.3
+        with:
+          args: "detect --source . --no-git --redact"
+
+      - name: Install yamllint
+        run: |
+          pip install yamllint
+>>>>>>> ae029e2 (chore: add pre-commit checks workflow to enforce code quality and standards)
 
       - name: Run yamllint
         run: |

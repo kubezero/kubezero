@@ -40,7 +40,7 @@ spec:
       namespace: kubezero
       server: https://kubernetes.default.svc
   sourceRepos:
-    - https://github.com/kubezero/kubezero
+    - https://github.com/wazery/kubezero
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -52,7 +52,7 @@ metadata:
 spec:
   project: controller
   source:
-    repoURL: https://github.com/kubezero/kubezero
+    repoURL: https://github.com/wazery/kubezero
     path: bootstrap
     targetRevision: main
   destination:
@@ -78,6 +78,6 @@ spec:
 #     argocd.argoproj.io/secret-type: repository
 # stringData:
 #   type: git
-#   url: https://github.com/kubezero/kubezero
+#   url: https://github.com/wazery/kubezero
 #   password: CHANGE_ME
 #   username: CHANGE_ME

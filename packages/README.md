@@ -1,6 +1,6 @@
 # KubeZero Packages
 
-The packages are pre-defined resources could be used as they are in the registry.
+The packages are pre-defined resources, which could be used as they are in the registry.
 
 ## How to use
 

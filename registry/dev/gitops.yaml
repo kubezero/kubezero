@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: vcluster-dev
+  name: dev
   namespace: kubezero
   annotations:
     argocd.argoproj.io/sync-wave: '100'
@@ -14,7 +14,7 @@ spec:
     namespace: default
   project: default
   source:
-    repoURL: https://github.com/kubezero/kubezero
+    repoURL: https://github.com/wazery/kubezero
     targetRevision: main
     path: registry/dev
   syncPolicy:
@@ -27,15 +27,13 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: guestbook-app-vcluster-dev
+  name: guestbook-app-dev
   namespace: kubezero
   annotations:
-    # Ensure this app syncs after vcluster-dev
     argocd.argoproj.io/sync-wave: '120'
 spec:
   destination:
-    # Ensure this app syncs after vcluster-dev
-    name: vcluster-dev
+    name: dev
     namespace: default
   project: default
   source:

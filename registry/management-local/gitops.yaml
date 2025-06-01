@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: management
+  name: management-local
   namespace: kubezero
 spec:
   description: Platform registry resources
@@ -13,22 +13,22 @@ spec:
     - namespace: '*'
       server: '*'
   sourceRepos:
-    - https://github.com/kubezero/kubezero
+    - https://github.com/wazery/kubezero
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: management
+  name: management-local
   namespace: kubezero
   annotations:
     argocd.argoproj.io/sync-wave: '100'
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: management
+  project: management-local
   source:
-    repoURL: https://github.com/kubezero/kubezero
-    path: registry/management
+    repoURL: https://github.com/wazery/kubezero
+    path: registry/management-local
     targetRevision: main
   destination:
     name: in-cluster

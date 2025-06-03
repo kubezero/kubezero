@@ -117,9 +117,28 @@ flowchart TD
   k8sManagement --"Manage"--> k8sProd
 ```
 
-## Docs
+## Documentation Overview
 
-- [KubeZero Packages](./packages/README.md)
+KubeZero provides comprehensive documentation to help you understand and implement its platform engineering patterns and directory structure:
+
+- **[Reference Architecture](docs/patterns.md):**
+  - Visual diagrams and explanations of common Kubernetes cluster topologies, including single-cluster, multi-cluster, and virtual cluster patterns.
+  - Helps you choose the right architecture for your use case and understand how KubeZero components fit together.
+
+- **[Directory Structure & Responsibilities](docs/structure.md):**
+  - Detailed breakdown of the KubeZero repository layout.
+  - Explains the purpose of each top-level directory (e.g., `modules/`, `stacks/`, `packages/`, etc.) and how they interact to enable modular, DRY, and scalable infrastructure management.
+
+- **[KubeZero Packages](packages/README.md):**
+  - Learn how to compose and manage higher-level bundles for specific platforms, customers, or use-cases.
+  - See practical examples of grouping multiple stacks for multi-cluster, multi-tenant, or SaaS scenarios.
+
+## Quick Links
+
+- [Reference Architecture (patterns.md)](docs/patterns.md)
+- [Directory Structure & Responsibilities (structure.md)](docs/structure.md)
+
+---
 
 ## Patterns
 

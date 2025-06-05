@@ -1,3 +1,4 @@
 argocd 2.14.11
 k3d 5.8.3
 vcluster 0.24.1
+kubectl 1.31.0

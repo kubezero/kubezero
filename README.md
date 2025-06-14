@@ -5,7 +5,7 @@
 </p>
 
 <h1 align="center">KubeZero</h1>
-<p align="center"><b>Out-of-the-box Kubernetes IaC for Platform Engineering and Environment-as-Code</b></p>
+<p align="center"><b>Zero-friction Kubernetes platform engineering.</b></p>
 
 > Kubernetes is the new Linux, Kubernetes is the platform!
 

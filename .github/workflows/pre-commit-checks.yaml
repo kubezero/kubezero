@@ -11,12 +11,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up asdf
-        uses: asdf-vm/actions/setup@v3
-
-      - name: Install tools from .tool-versions
-        run: asdf install
-
+      - name: Install asdf & tools
+        uses: asdf-vm/actions/install@v4
+        
       - name: Run pre-commit hooks
         run: |
           pre-commit run --all-files

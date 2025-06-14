@@ -5,7 +5,7 @@
 </p>
 
 <h1 align="center">KubeZero</h1>
-<p align="center"><b>Zero-friction Kubernetes platform engineering.</b></p>
+<p align="center"><b>Zero-Friction Kubernetes Platform Engineering</b></p>
 
 > Kubernetes is the new Linux, Kubernetes is the platform!
 

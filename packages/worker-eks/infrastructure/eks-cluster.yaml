@@ -1,0 +1,20 @@
+apiVersion: eks.aws.crossplane.io/v1beta1
+kind: Cluster
+metadata:
+  name: worker-eks
+spec:
+  forProvider:
+    region: us-west-1
+    version: "1.29"
+    roleArn: arn:aws:iam::<YOUR_AWS_ACCOUNT_ID>:role/crossplane-eks-cluster-role
+    resourcesVpcConfig:
+      subnetIds:
+        - <SUBNET_ID_1>
+        - <SUBNET_ID_2>
+      endpointPublicAccess: true
+      endpointPrivateAccess: true
+  providerConfigRef:
+    name: aws-provider
+  writeConnectionSecretToRef:
+    name: worker-eks-kubeconfig
+    namespace: crossplane-system

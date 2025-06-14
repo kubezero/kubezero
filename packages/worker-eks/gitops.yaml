@@ -1,0 +1,54 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: worker-eks
+  namespace: kubezero
+spec:
+  description: Worker EKS cluster resources
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  destinations:
+    - namespace: '*'
+      server: '*'
+  sourceRepos:
+    - https://github.com/kubezero/kubezero
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: worker-eks
+  namespace: kubezero
+  annotations:
+    argocd.argoproj.io/sync-wave: '100'
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: worker-eks
+  source:
+    repoURL: https://github.com/kubezero/kubezero
+    path: registry/worker-eks
+    targetRevision: main
+    directory:
+      recurse: true
+      # Enable parameter substitution
+      # See https://argo-cd.readthedocs.io/en/stable/user-guide/parameters/
+      # and https://argo-cd.readthedocs.io/en/stable/user-guide/helm/
+      # For Kustomize, use kustomize.buildOptions or kustomize.parameters
+      kustomize:
+        parameters:
+          - name: AWS_ACCOUNT_ID
+            value: "123456789012"
+          - name: SUBNET_RESOURCE_1
+            value: "subnet-abc123"
+          - name: SUBNET_RESOURCE_2
+            value: "subnet-def456"
+  destination:
+    name: in-cluster
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - Replace=true

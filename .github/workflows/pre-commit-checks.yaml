@@ -11,27 +11,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
+      - name: Set up asdf
+        uses: asdf-vm/actions/setup@v3
 
-      - name: Install pre-commit
-        run: |
-          pip install pre-commit
+      - name: Install tools from .tool-versions
+        run: asdf install
 
       - name: Run pre-commit hooks
         run: |
           pre-commit run --all-files
 
-      - name: Install gitleaks
-        uses: gitleaks/gitleaks-action@v2.3.3
-        with:
-          args: "detect --source . --no-git --redact"
-
-      - name: Install yamllint
+      - name: Run gitleaks
         run: |
-          pip install yamllint
+          gitleaks detect --source . --no-git --redact
 
       - name: Run yamllint
         run: |

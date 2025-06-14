@@ -2,3 +2,9 @@ argocd 2.14.11
 k3d 5.8.3
 vcluster 0.24.1
 kubectl 1.31.0
+pre-commit latest
+gitleaks latest
+yamllint latest
+kubeconform latest
+kube-score latest
+python 3.12.3

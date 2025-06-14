@@ -30,6 +30,20 @@ spec:
     repoURL: https://github.com/kubezero/kubezero
     path: registry/management-eks
     targetRevision: main
+    directory:
+      recurse: true
+      # Enable parameter substitution
+      # See https://argo-cd.readthedocs.io/en/stable/user-guide/parameters/
+      # and https://argo-cd.readthedocs.io/en/stable/user-guide/helm/
+      # For Kustomize, use kustomize.buildOptions or kustomize.parameters
+      kustomize:
+        parameters:
+          - name: AWS_ACCOUNT_ID
+            value: "123456789012"
+          - name: SUBNET_RESOURCE_1
+            value: "subnet-abc123"
+          - name: SUBNET_RESOURCE_2
+            value: "subnet-def456"
   destination:
     name: in-cluster
   syncPolicy:

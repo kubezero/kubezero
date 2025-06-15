@@ -36,6 +36,12 @@ configMapGenerator:
       - AWS_ACCOUNT_ID=123456789012
       - SUBNET_RESOURCE_1=subnet-abc123
       - SUBNET_RESOURCE_2=subnet-def456
+      - VPC_ID=vpc-xyz789
+      - AWS_REGION=us-west-1
+      - EKS_VERSION=1.29
+      - NODE_SIZE=medium
+      - MIN_NODE_COUNT=2
+      - MAX_NODE_COUNT=5
 
 vars:
   - name: AWS_ACCOUNT_ID
@@ -59,3 +65,45 @@ vars:
       apiVersion: v1
     fieldref:
       fieldpath: data.SUBNET_RESOURCE_2
+  - name: VPC_ID
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.VPC_ID
+  - name: AWS_REGION
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.AWS_REGION
+  - name: EKS_VERSION
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.EKS_VERSION
+  - name: NODE_SIZE
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.NODE_SIZE
+  - name: MIN_NODE_COUNT
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.MIN_NODE_COUNT
+  - name: MAX_NODE_COUNT
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.MAX_NODE_COUNT

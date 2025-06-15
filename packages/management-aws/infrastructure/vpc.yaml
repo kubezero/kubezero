@@ -4,7 +4,7 @@ metadata:
   name: management-vpc
 spec:
   forProvider:
-    region: us-west-1
+    region: $(AWS_REGION)
     cidrBlock: 10.0.0.0/16
     enableDnsHostNames: true
     enableDnsSupport: true

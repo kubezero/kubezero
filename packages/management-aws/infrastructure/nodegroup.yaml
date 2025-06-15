@@ -4,18 +4,18 @@ metadata:
   name: management-aws-ng
 spec:
   forProvider:
-    region: us-west-1
+    region: $(AWS_REGION)
     clusterNameRef:
       name: management-aws
-    nodeRole: arn:aws:iam::${AWS_ACCOUNT_ID}:role/crossplane-eks-nodegroup-role
+    nodeRole: arn:aws:iam::$(AWS_ACCOUNT_ID):role/crossplane-eks-nodegroup-role
     scalingConfig:
-      minSize: 2
-      maxSize: 5
-      desiredSize: 3
+      minSize: $(MIN_NODE_COUNT)
+      maxSize: $(MAX_NODE_COUNT)
+      desiredSize: $(MIN_NODE_COUNT)
     subnetRefs:
-      - name: ${SUBNET_RESOURCE_1}
-      - name: ${SUBNET_RESOURCE_2}
+      - name: $(SUBNET_RESOURCE_1)
+      - name: $(SUBNET_RESOURCE_2)
     instanceTypes:
-      - t3.medium
+      - $(NODE_SIZE)
   providerConfigRef:
     name: aws-provider

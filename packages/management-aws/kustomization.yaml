@@ -3,5 +3,59 @@ kind: Kustomization
 
 resources:
   - ./infrastructure
-  # Optionally reference shared stacks (e.g., k8s-essentials) here
-  # - ../../stacks/k8s-essentials
+
+patches:
+  - target:
+      kind: Cluster
+    patch: |-
+      - op: replace
+        path: /spec/forProvider/roleArn
+        value: arn:aws:iam:$(AWS_ACCOUNT_ID):role/crossplane-eks-cluster-role
+      - op: replace
+        path: /spec/forProvider/resourcesVpcConfig/subnetIds/0
+        value: $(SUBNET_RESOURCE_1)
+      - op: replace
+        path: /spec/forProvider/resourcesVpcConfig/subnetIds/1
+        value: $(SUBNET_RESOURCE_2)
+  - target:
+      kind: NodeGroup
+    patch: |-
+      - op: replace
+        path: /spec/forProvider/nodeRole
+        value: arn:aws:iam:$(AWS_ACCOUNT_ID):role/crossplane-eks-nodegroup-role
+      - op: replace
+        path: /spec/forProvider/subnetRefs/0/name
+        value: $(SUBNET_RESOURCE_1)
+      - op: replace
+        path: /spec/forProvider/subnetRefs/1/name
+        value: $(SUBNET_RESOURCE_2)
+
+configMapGenerator:
+  - name: argocd-params
+    literals:
+      - AWS_ACCOUNT_ID=123456789012
+      - SUBNET_RESOURCE_1=subnet-abc123
+      - SUBNET_RESOURCE_2=subnet-def456
+
+vars:
+  - name: AWS_ACCOUNT_ID
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.AWS_ACCOUNT_ID
+  - name: SUBNET_RESOURCE_1
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.SUBNET_RESOURCE_1
+  - name: SUBNET_RESOURCE_2
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.SUBNET_RESOURCE_2

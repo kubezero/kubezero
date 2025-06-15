@@ -1,4 +1,4 @@
-# KubeZero Management EKS Package
+# KubeZero Management AWS Package
 
 This package provisions the AWS EKS management cluster using Crossplane, following KubeZero's modular, GitOps-native structure.
 

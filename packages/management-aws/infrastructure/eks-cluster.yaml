@@ -1,12 +1,12 @@
 apiVersion: eks.aws.crossplane.io/v1beta1
 kind: Cluster
 metadata:
-  name: management-eks
+  name: management-aws
 spec:
   forProvider:
     region: us-west-1
     version: "1.29"
-    roleArn: arn:aws:iam::<YOUR_AWS_ACCOUNT_ID>:role/crossplane-eks-cluster-role
+    roleArn: arn:aws:iam::${AWS_ACCOUNT_ID}:role/crossplane-eks-cluster-role
     resourcesVpcConfig:
       subnetIds:
         - <SUBNET_ID_1>
@@ -16,5 +16,5 @@ spec:
   providerConfigRef:
     name: aws-provider
   writeConnectionSecretToRef:
-    name: management-eks-kubeconfig
+    name: management-aws-kubeconfig
     namespace: crossplane-system

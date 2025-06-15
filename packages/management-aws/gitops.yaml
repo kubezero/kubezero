@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: management-eks
+  name: management-aws
   namespace: kubezero
 spec:
   description: Management EKS cluster resources
@@ -18,17 +18,17 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: management-eks
+  name: management-aws
   namespace: kubezero
   annotations:
     argocd.argoproj.io/sync-wave: '100'
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: management-eks
+  project: management-aws
   source:
     repoURL: https://github.com/kubezero/kubezero
-    path: registry/management-eks
+    path: registry/management-aws
     targetRevision: main
     directory:
       recurse: true

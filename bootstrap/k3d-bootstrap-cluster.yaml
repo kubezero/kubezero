@@ -26,4 +26,4 @@ files:
     source: kubezero-bootstrap-manifests.yaml
     destination: k3s-manifests/kubezero.yaml
     nodeFilters:
-    - "server:*"
+      - "server:*"

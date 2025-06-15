@@ -1,0 +1,37 @@
+name: Pre-commit Checks
+
+on:
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install asdf & tools
+        uses: asdf-vm/actions/install@v4
+        
+      - name: Run pre-commit hooks
+        run: |
+          pre-commit run --all-files
+
+      - name: Run gitleaks
+        run: |
+          gitleaks detect --source . --no-git --redact
+
+      - name: Run yamllint
+        run: |
+          yamllint .
+
+      - name: Run kubeconform linter
+        run: |
+          chmod +x .hooks/kubeconform.sh
+          ./.hooks/kubeconform.sh || exit 1
+
+      - name: Run kube-score static analysis
+        run: |
+          chmod +x .hooks/kube-score.sh
+          ./.hooks/kube-score.sh || exit 1

@@ -1,0 +1,30 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      - id: kubeconform
+        name: kubeconform linter
+        entry: .hooks/kubeconform.sh
+        language: script
+        files: \.ya?ml$
+
+      - id: kube-score
+        name: kube-score static analysis
+        entry: .hooks/kube-score.sh
+        language: script
+        files: \.ya?ml$
+
+  - repo: https://github.com/zricethezav/gitleaks
+    rev: v8.18.0
+    hooks:
+      - id: gitleaks
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.32.0
+    hooks:
+      - id: yamllint

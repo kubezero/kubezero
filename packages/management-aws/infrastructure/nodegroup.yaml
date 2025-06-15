@@ -1,0 +1,21 @@
+apiVersion: eks.aws.crossplane.io/v1beta1
+kind: NodeGroup
+metadata:
+  name: management-aws-ng
+spec:
+  forProvider:
+    region: $(AWS_REGION)
+    clusterNameRef:
+      name: management-aws
+    nodeRole: arn:aws:iam::$(AWS_ACCOUNT_ID):role/crossplane-eks-nodegroup-role
+    scalingConfig:
+      minSize: $(MIN_NODE_COUNT)
+      maxSize: $(MAX_NODE_COUNT)
+      desiredSize: $(MIN_NODE_COUNT)
+    subnetRefs:
+      - name: $(SUBNET_RESOURCE_1)
+      - name: $(SUBNET_RESOURCE_2)
+    instanceTypes:
+      - $(NODE_SIZE)
+  providerConfigRef:
+    name: aws-provider

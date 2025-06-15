@@ -1,0 +1,22 @@
+apiVersion: aws.platformref.upbound.io/v1alpha1
+kind: XCluster
+metadata:
+  name: management-aws
+spec:
+  parameters:
+    id: management-aws
+    region: $(AWS_REGION)
+    version: "$(EKS_VERSION)"
+    vpcId: $(VPC_ID)
+    subnetIds:
+      - $(SUBNET_ID_1)
+      - $(SUBNET_ID_2)
+    nodeSize: $(NODE_SIZE)
+    minNodeCount: $(MIN_NODE_COUNT)
+    maxNodeCount: $(MAX_NODE_COUNT)
+    # Add other parameters as needed from the platform-ref-aws docs
+  compositionRef:
+    name: xcluster
+  writeConnectionSecretToRef:
+    name: management-aws-kubeconfig
+    namespace: crossplane-system

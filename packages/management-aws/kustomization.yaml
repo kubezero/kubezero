@@ -1,0 +1,109 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ./infrastructure
+
+patches:
+  - target:
+      kind: Cluster
+    patch: |-
+      - op: replace
+        path: /spec/forProvider/roleArn
+        value: arn:aws:iam:$(AWS_ACCOUNT_ID):role/crossplane-eks-cluster-role
+      - op: replace
+        path: /spec/forProvider/resourcesVpcConfig/subnetIds/0
+        value: $(SUBNET_RESOURCE_1)
+      - op: replace
+        path: /spec/forProvider/resourcesVpcConfig/subnetIds/1
+        value: $(SUBNET_RESOURCE_2)
+  - target:
+      kind: NodeGroup
+    patch: |-
+      - op: replace
+        path: /spec/forProvider/nodeRole
+        value: arn:aws:iam:$(AWS_ACCOUNT_ID):role/crossplane-eks-nodegroup-role
+      - op: replace
+        path: /spec/forProvider/subnetRefs/0/name
+        value: $(SUBNET_RESOURCE_1)
+      - op: replace
+        path: /spec/forProvider/subnetRefs/1/name
+        value: $(SUBNET_RESOURCE_2)
+
+configMapGenerator:
+  - name: argocd-params
+    literals:
+      - AWS_ACCOUNT_ID=123456789012
+      - SUBNET_RESOURCE_1=subnet-abc123
+      - SUBNET_RESOURCE_2=subnet-def456
+      - VPC_ID=vpc-xyz789
+      - AWS_REGION=us-west-1
+      - EKS_VERSION=1.29
+      - NODE_SIZE=medium
+      - MIN_NODE_COUNT=2
+      - MAX_NODE_COUNT=5
+
+vars:
+  - name: AWS_ACCOUNT_ID
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.AWS_ACCOUNT_ID
+  - name: SUBNET_RESOURCE_1
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.SUBNET_RESOURCE_1
+  - name: SUBNET_RESOURCE_2
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.SUBNET_RESOURCE_2
+  - name: VPC_ID
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.VPC_ID
+  - name: AWS_REGION
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.AWS_REGION
+  - name: EKS_VERSION
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.EKS_VERSION
+  - name: NODE_SIZE
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.NODE_SIZE
+  - name: MIN_NODE_COUNT
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.MIN_NODE_COUNT
+  - name: MAX_NODE_COUNT
+    objref:
+      kind: ConfigMap
+      name: argocd-params
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.MAX_NODE_COUNT

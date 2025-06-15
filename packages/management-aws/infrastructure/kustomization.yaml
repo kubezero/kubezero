@@ -3,5 +3,5 @@ kind: Kustomization
 resources:
   - providerconfig.yaml
   - vpc.yaml
-  - eks-cluster.yaml
+  - xcluster.yaml
   - nodegroup.yaml

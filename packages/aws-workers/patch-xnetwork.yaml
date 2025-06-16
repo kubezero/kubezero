@@ -1,0 +1,8 @@
+---
+apiVersion: aws.platform.upbound.io/v1alpha1
+kind: XEKS
+metadata:
+  name: aws-network
+spec:
+  parameters:
+    providerConfigName: workers-provider-aws

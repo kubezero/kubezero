@@ -1,8 +1,10 @@
+---
 name: Pre-commit Checks
 
 on:
   pull_request:
-    branches: ["*"]
+    branches:
+      - "*"
 
 jobs:
   pre-commit:
@@ -13,7 +15,7 @@ jobs:
 
       - name: Install asdf & tools
         uses: asdf-vm/actions/install@v4
-        
+
       - name: Run pre-commit hooks
         run: |
           pre-commit run --all-files

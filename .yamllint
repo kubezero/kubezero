@@ -1,0 +1,10 @@
+extends: default
+
+rules:
+  line-length:
+    max: 80
+    level: warning
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+    ignore: |
+      stacks/virtual-cluster/helm-chart/helm-chart.yaml

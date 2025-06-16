@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: management-local
+  name: virtual-management
   namespace: kubezero
 spec:
   description: Platform registry resources
@@ -18,17 +18,17 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: management-local
+  name: virtual-management
   namespace: kubezero
   annotations:
     argocd.argoproj.io/sync-wave: '100'
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: management-local
+  project: virtual-management
   source:
     repoURL: https://github.com/kubezero/kubezero
-    path: registry/management-local
+    path: registry/virtual-management
     targetRevision: main
   destination:
     name: in-cluster

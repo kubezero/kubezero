@@ -1,4 +1,4 @@
-# KubeZero AWS Management Package
+# KubeZero AWS Workers Package
 
 This package provides a GitOps-ready Crossplane setup for managing an EKS cluster and its supporting AWS infrastructure on AWS, by importing the pre-configured `modules/aws/eks` module. All necessary AWS provider configuration and resources (XEKS, XNetwork) are handled by the imported module.
 
@@ -20,18 +20,18 @@ To use this package:
      ```
 
 2. **Copy the package**
-   - Copy the entire `aws-management` folder into your `registry` directory (e.g., `registry/aws-management`).
+   - Copy the entire `aws-workers` folder into your `registry` directory (e.g., `registry/aws-workers`).
      ```shell
-     cp -a packages/aws-management registry/aws-management
+     cp -a packages/aws-workers registry/aws-workers
      ```
    - Commit it to your repository:
      ```shell
-     git add registry/aws-management
-     git commit -m "feat: enable aws-management package"
+     git add registry/aws-workers
+     git commit -m "feat: enable aws-workers package"
      ```
 
 3. **Deploy with ArgoCD or Kustomize**
-   - **ArgoCD**: Point your Application at the `registry/aws-management` directory or use the provided `gitops.yaml`.
+   - **ArgoCD**: Point your Application at the `registry/aws-workers` directory or use the provided `gitops.yaml`.
    - **Kustomize**: From the package root, run:
      ```shell
      kustomize build . | kubectl apply -f -

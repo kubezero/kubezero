@@ -1,0 +1,38 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: gcp-management
+spec:
+  description: Management EKS cluster resources
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  destinations:
+    - namespace: '*'
+      server: '*'
+  sourceRepos:
+    - https://github.com/kubezero/kubezero
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gcp-management
+  annotations:
+    argocd.argoproj.io/sync-wave: '100'
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: gcp-management
+  source:
+    repoURL: https://github.com/kubezero/kubezero
+    path: registry/gcp-management
+    targetRevision: main
+  destination:
+    name: in-cluster
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - Replace=true

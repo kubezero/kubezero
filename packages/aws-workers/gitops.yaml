@@ -2,9 +2,9 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: aws-management
+  name: aws-workers
 spec:
-  description: Management EKS cluster resources
+  description: Workers EKS cluster resources
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
@@ -17,16 +17,16 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: aws-management
+  name: aws-workers
   annotations:
     argocd.argoproj.io/sync-wave: '100'
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: aws-management
+  project: aws-workers
   source:
     repoURL: https://github.com/kubezero/kubezero
-    path: registry/aws-management
+    path: registry/aws-workers
     targetRevision: main
   destination:
     name: in-cluster

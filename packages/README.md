@@ -9,7 +9,7 @@ Copy (or link) the package you want to the `registry` directory, and KubeZero wi
 Example:
 
 ```shell
-cp -a packages/management-local registry/management-local
+cp -a packages/virtual-management registry/virtual-management
 ```
 
 Then you can bootstrap for local testing.
@@ -17,6 +17,6 @@ Then you can bootstrap for local testing.
 You can also commit it:
 
 ```shell
-git add registry/management-local
-git commit -m "feat: enable management-local cluster"
+git add registry/virtual-management
+git commit -m "feat: enable virtual-management cluster"
 ```

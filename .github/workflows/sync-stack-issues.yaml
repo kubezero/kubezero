@@ -13,8 +13,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cache asdf tools
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.asdf
+          key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-asdf-
+
       - name: Install asdf & tools
         uses: asdf-vm/actions/install@v4
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Set up Go module dependencies
+        working-directory: ./scripts/sync-stacks
+        run: |
+          go mod tidy
 
       - name: Build sync-stacks tool
         run: |

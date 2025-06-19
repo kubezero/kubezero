@@ -1,0 +1,27 @@
+name: Sync Stack Issues
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'stacks/stack-catalog.yaml'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install asdf & tools
+        uses: asdf-vm/actions/install@v4
+
+      - name: Build sync-stacks tool
+        run: |
+          go build -o sync-stacks ./scripts/sync-stacks/sync-stacks.go
+
+      - name: Run stack issue sync
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: ./sync-stacks

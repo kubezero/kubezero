@@ -1,0 +1,99 @@
+apiVersion: kubezero.io/v1alpha1
+kind: StackCatalog
+metadata:
+  name: kubezero-stack-roadmap
+  description: >
+    Planned stacks to be developed and packaged as reusable, composable infrastructure patterns.
+    Each stack represents a production-grade use-case (SSO, LLM, Observability, etc).
+
+stacks:
+  - name: vault-sso
+    description: Secure identity-backed secret access using Vault with SSO
+    components:
+      - vault
+      - dex or authentik
+      - ingress-nginx
+      - cert-manager
+      - external-secrets
+
+  - name: backstage-idp
+    description: Internal Developer Platform with Backstage and supporting infra
+    components:
+      - backstage
+      - argocd
+      - external-secrets
+      - ingress
+      - postgres
+      - oauth proxy
+
+  - name: ai-inference
+    description: AI/LLM inference stack with GPU scheduling and vector DB
+    components:
+      - vllm/ollama
+      - weaviate or qdrant
+      - ingress-nginx
+      - prometheus + grafana
+      - secrets provider
+
+  - name: multi-tenant-platform
+    description: Secure multi-tenant Kubernetes platform using vCluster or Capsule
+    components:
+      - vcluster or capsule
+      - resource quotas
+      - external-secrets
+      - ingress controller
+      - observability stack
+
+  - name: observability
+    description: Plug-and-play monitoring + logging + tracing stack
+    components:
+      - prometheus
+      - grafana
+      - loki
+      - fluent-bit
+      - otel-collector
+
+  - name: zero-trust-access
+    description: VPN-less internal access with SSO and MTLS
+    components:
+      - pomerium or oauth2-proxy
+      - oidc provider
+      - cert-manager
+      - vault
+      - ingress
+
+  - name: artifact-registry
+    description: Internal registry for Docker and Helm artifacts
+    components:
+      - harbor
+      - ingress-nginx
+      - minio
+      - external-secrets
+      - trivy (scanner)
+
+  - name: feature-flags
+    description: Feature rollout and A/B testing platform
+    components:
+      - unleash or flagsmith
+      - postgres
+      - external-secrets
+      - grafana
+      - ingress + auth
+
+  - name: incident-response
+    description: Stack for alerting, on-call rotation, and status updates
+    components:
+      - alertmanager
+      - grafana oncall
+      - statuspage (self-hosted)
+      - slack/webhook integration
+      - audit logs
+
+  - name: data-pipeline
+    description: Internal data integration with ETL and workflow orchestration
+    components:
+      - airbyte or nifi
+      - temporal or argo workflows
+      - postgres
+      - minio
+      - oauth proxy

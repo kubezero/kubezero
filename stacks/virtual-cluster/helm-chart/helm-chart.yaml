@@ -44,6 +44,11 @@ valuesInline:
                     property: config
             template:
               engineVersion: v2
+              metadata:
+                annotations:
+                  managed-by: external-secrets
+                labels:
+                  argocd.argoproj.io/secret-type: cluster
               data:
                 name: {{ .Release.Name }}
                 server: https://{{ .Release.Name }}.{{ .Release.Namespace }}.svc:443

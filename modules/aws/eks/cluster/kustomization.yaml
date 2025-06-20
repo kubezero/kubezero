@@ -6,3 +6,4 @@ commonAnnotations:
 resources:
   - xeks.yaml
   - xnetwork.yaml
+  - cluster-secret.yaml

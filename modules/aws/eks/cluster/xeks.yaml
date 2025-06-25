@@ -1,0 +1,24 @@
+---
+apiVersion: aws.platform.upbound.io/v1alpha1
+kind: XEKS
+metadata:
+  name: aws-eks
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  parameters:
+    id: aws-eks
+    providerConfigName: provider-aws
+    # To set a custom region, specify availability zones in the XNetwork
+    # for all subnets. If not set, the default region and zones are used.
+    region: eu-west-1
+    version: "1.33"
+    accessConfig:
+      authenticationMode: API_AND_CONFIG_MAP
+      bootstrapClusterCreatorAdminPermissions: true
+    nodes:
+      count: 1
+      instanceType: t3.small
+  writeConnectionSecretToRef:
+    name: aws-eks-kubeconfig
+    namespace: crossplane-system

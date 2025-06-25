@@ -1,0 +1,10 @@
+---
+apiVersion: aws.platform.upbound.io/v1alpha1
+kind: XEKS
+metadata:
+  name: aws-eks
+spec:
+  providerConfigName: worker-provider-aws
+  writeConnectionSecretToRef:
+    name: worker-aws-eks-kubeconfig
+    namespace: crossplane-system

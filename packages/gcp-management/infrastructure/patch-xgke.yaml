@@ -1,0 +1,9 @@
+---
+apiVersion: gcp.platform.upbound.io/v1alpha1
+kind: XGKE
+metadata:
+  name: gcp-gke
+spec:
+  writeConnectionSecretToRef:
+    name: management-gcp-gke-kubeconfig
+    namespace: crossplane-system

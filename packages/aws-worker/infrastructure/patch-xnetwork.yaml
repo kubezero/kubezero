@@ -5,4 +5,4 @@ metadata:
   name: aws-network
 spec:
   parameters:
-    providerConfigName: workers-provider-aws
+    providerConfigName: worker-provider-aws

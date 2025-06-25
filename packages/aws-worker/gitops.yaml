@@ -2,9 +2,9 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: aws-management
+  name: aws-worker
 spec:
-  description: Management EKS cluster resources
+  description: Worker EKS cluster resources
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
@@ -17,17 +17,17 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: aws-management
+  name: aws-worker
   annotations:
     argocd.argoproj.io/sync-wave: '100'
     argocd.argoproj.io/depends-on: aws-provider
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: aws-management-infrastructure
+  project: aws-worker-infrastructure
   source:
     repoURL: https://github.com/kubezero/kubezero
-    path: registry/aws-management/infrastructure
+    path: registry/aws-worker/infrastructure
     targetRevision: main
   destination:
     name: in-cluster
@@ -41,21 +41,21 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: aws-management-applications
+  name: aws-worker-applications
   annotations:
     argocd.argoproj.io/sync-wave: '100'
     argocd.argoproj.io/depends-on: aws-provider
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: aws-management
+  project: aws-worker
   source:
     repoURL: https://github.com/kubezero/kubezero
-    path: registry/aws-management/applications
+    path: registry/aws-worker/applications
     targetRevision: main
   destination:
     # NOTE: Change the name according to your cluster.
-    name: aws-management
+    name: aws-worker
   syncPolicy:
     automated:
       prune: true

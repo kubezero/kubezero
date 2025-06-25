@@ -2,10 +2,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namePrefix: management-
-
 resources:
-  - ../../modules/aws/eks/cluster
+  - ../../../modules/aws/eks/provider
+  - ../../../modules/aws/eks/cluster
 
 patches:
   - path: patch-xeks.yaml

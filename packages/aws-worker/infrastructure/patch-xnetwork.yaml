@@ -1,6 +1,6 @@
 ---
 apiVersion: aws.platform.upbound.io/v1alpha1
-kind: XEKS
+kind: XNetwork
 metadata:
   name: aws-network
 spec:

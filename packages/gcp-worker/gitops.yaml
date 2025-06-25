@@ -1,0 +1,64 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: gcp-worker
+spec:
+  description: Worker GKE cluster resources
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  destinations:
+    - namespace: '*'
+      server: '*'
+  sourceRepos:
+    - https://github.com/kubezero/kubezero
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gcp-worker-infrastructure
+  annotations:
+    argocd.argoproj.io/sync-wave: '100'
+    argocd.argoproj.io/depends-on: gcp-provider
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: gcp-worker-infrastructure
+  source:
+    repoURL: https://github.com/kubezero/kubezero
+    path: registry/gcp-worker/infrastructure
+    targetRevision: main
+  destination:
+    name: in-cluster
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gcp-worker-applications
+  annotations:
+    argocd.argoproj.io/sync-wave: '100'
+    argocd.argoproj.io/depends-on: gcp-provider
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: gcp-worker
+  source:
+    repoURL: https://github.com/kubezero/kubezero
+    path: registry/gcp-worker/applications
+    targetRevision: main
+  destination:
+    # NOTE: Change the name according to your cluster.
+    name: gcp-worker
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true

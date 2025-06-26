@@ -3,9 +3,8 @@ apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: virtual-worker
-  namespace: kubezero
 spec:
-  description: Platform registry resources
+  description: Management GKE cluster resources
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
@@ -18,17 +17,17 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: virtual-worker
-  namespace: kubezero
+  name: virtual-worker-infrastructure
   annotations:
     argocd.argoproj.io/sync-wave: '100'
+    argocd.argoproj.io/depends-on: vcluster
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: virtual-worker
+  project: virtual-worker-infrastructure
   source:
     repoURL: https://github.com/kubezero/kubezero
-    path: registry/virtual-worker
+    path: registry/virtual-worker/infrastructure
     targetRevision: main
   destination:
     name: in-cluster
@@ -37,4 +36,29 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - Replace=true
+      - SkipDryRunOnMissingResource=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: virtual-worker-applications
+  annotations:
+    argocd.argoproj.io/sync-wave: '100'
+    argocd.argoproj.io/depends-on: vcluster
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: virtual-worker
+  source:
+    repoURL: https://github.com/kubezero/kubezero
+    path: registry/virtual-worker/applications
+    targetRevision: main
+  destination:
+    # NOTE: Change the name according to your cluster.
+    name: virtual-worker
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true

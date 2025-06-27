@@ -4,7 +4,8 @@ kind: XEKS
 metadata:
   name: aws-eks
 spec:
-  providerConfigName: worker-provider-aws
+  parameters:
+    providerConfigName: worker-provider-aws
   writeConnectionSecretToRef:
     name: worker-aws-eks-kubeconfig
     namespace: crossplane-system

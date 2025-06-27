@@ -24,7 +24,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: aws-worker-infrastructure
+  project: aws-worker
   source:
     repoURL: https://github.com/kubezero/kubezero
     path: registry/aws-worker/infrastructure

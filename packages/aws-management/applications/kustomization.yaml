@@ -6,3 +6,4 @@ namePrefix: management-
 
 resources:
   - ../../../stacks/k8s-essentials/helm-chart
+  - ../../../controller

@@ -1,0 +1,11 @@
+apiVersion: digitalocean.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: digitalocean-providerconfig
+spec:
+  credentials:
+    source: Secret
+    secretRef:
+      name: example-creds
+      namespace: crossplane-system
+      key: credentials

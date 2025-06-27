@@ -4,7 +4,7 @@ kind: Kustomization
 
 resources:
   - ../../../modules/aws/eks/provider
-  - ../../../modules/aws/eks/cluster
+  - ../../../stacks/eks-cluster
 
 patches:
   - path: patch-xeks.yaml

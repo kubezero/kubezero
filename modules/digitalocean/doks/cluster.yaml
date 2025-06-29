@@ -4,14 +4,14 @@ metadata:
   name: digitalocean-doks
 spec:
   forProvider:
-    name: digitalocean-providerconfig
+    name: digitalocean-cluster
+    vpcUuidRef:
+      name: digitalocean-vpc
     nodePool:
       - name: worker-pool
-        nodeCount: 3
+        nodeCount: 1
         size: s-2vcpu-2gb
-        taint:
-          - effect: NoSchedule
-            key: workloadKind
-            value: database
-    region: nyc1
-    version: 1.22.8-do.1
+    region: nyc3
+    version: 1.33.1-do.0
+  providerConfigRef:
+    name: digitalocean-providerconfig

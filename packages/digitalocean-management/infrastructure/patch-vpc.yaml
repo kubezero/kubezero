@@ -6,5 +6,4 @@ metadata:
 spec:
   forProvider:
     ipRange: 10.10.10.0/24
-    name: digitalocean-project-network
     region: nyc3

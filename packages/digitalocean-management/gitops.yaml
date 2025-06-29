@@ -24,13 +24,13 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: digitalocean-management-infrastructure
+  project: digitalocean-management
   source:
     repoURL: https://github.com/kubezero/kubezero
     path: registry/digitalocean-management/infrastructure
     targetRevision: main
   destination:
-    namespace: crossplane-system
+    namespace: kubezero
     name: in-cluster
   syncPolicy:
     automated:
@@ -55,7 +55,7 @@ spec:
     path: registry/digitalocean-management/applications
     targetRevision: main
   destination:
-    namespace: crossplane-system
+    namespace: kubezero
     # NOTE: Change the name according to your cluster.
     name: digitalocean-management
   syncPolicy:

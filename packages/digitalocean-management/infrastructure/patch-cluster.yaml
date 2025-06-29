@@ -1,0 +1,8 @@
+apiVersion: kubernetes.digitalocean.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  name: digitalocean-doks
+spec:
+  writeConnectionSecretToRef:
+    name: management-digitalocean-doks-kubeconfig
+    namespace: crossplane-system

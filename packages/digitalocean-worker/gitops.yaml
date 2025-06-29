@@ -1,0 +1,66 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: digitalocean-worker
+spec:
+  description: worker DOKS cluster resources
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  destinations:
+    - namespace: '*'
+      server: '*'
+  sourceRepos:
+    - https://github.com/kubezero/kubezero
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: digitalocean-worker-infrastructure
+  annotations:
+    argocd.argoproj.io/sync-wave: '100'
+    argocd.argoproj.io/depends-on: digitalocean-provider
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: digitalocean-worker-infrastructure
+  source:
+    repoURL: https://github.com/kubezero/kubezero
+    path: registry/digitalocean-worker/infrastructure
+    targetRevision: main
+  destination:
+    namespace: crossplane-system
+    name: in-cluster
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: digitalocean-worker-applications
+  annotations:
+    argocd.argoproj.io/sync-wave: '100'
+    argocd.argoproj.io/depends-on: digitalocean-provider
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: digitalocean-worker
+  source:
+    repoURL: https://github.com/kubezero/kubezero
+    path: registry/digitalocean-worker/applications
+    targetRevision: main
+  destination:
+    namespace: crossplane-system
+    # NOTE: Change the name according to your cluster.
+    name: digitalocean-worker
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true

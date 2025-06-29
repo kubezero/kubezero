@@ -1,0 +1,15 @@
+---
+apiVersion: project.digitalocean.crossplane.io/v1alpha1
+kind: Project
+metadata:
+  annotations:
+    meta.upbound.io/example-id: project/v1alpha1/project
+  labels:
+    testing.upbound.io/example-name: playground
+  name: digitalocean-project
+spec:
+  forProvider:
+    description: A project to represent development resources.
+    environment: Development
+    name: playground
+    purpose: Web Application

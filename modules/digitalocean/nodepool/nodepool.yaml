@@ -1,0 +1,22 @@
+---
+apiVersion: kubernetes.digitalocean.crossplane.io/v1alpha1
+kind: NodePool
+metadata:
+  name: digitalocean-nodepool
+spec:
+  forProvider:
+    clusterIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: foo
+    labels:
+      priority: high
+      service: backend
+    name: backend-pool
+    nodeCount: 2
+    size: c-2
+    tags:
+      - backend
+    taint:
+      - effect: NoSchedule
+        key: workloadKind
+        value: database

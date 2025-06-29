@@ -1,0 +1,17 @@
+apiVersion: kubernetes.digitalocean.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  name: digitalocean-doks
+spec:
+  forProvider:
+    name: digitalocean-providerconfig
+    nodePool:
+      - name: worker-pool
+        nodeCount: 3
+        size: s-2vcpu-2gb
+        taint:
+          - effect: NoSchedule
+            key: workloadKind
+            value: database
+    region: nyc1
+    version: 1.22.8-do.1

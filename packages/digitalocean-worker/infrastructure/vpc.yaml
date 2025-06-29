@@ -1,0 +1,13 @@
+apiVersion: vpc.digitalocean.crossplane.io/v1alpha1
+kind: VPC
+metadata:
+  annotations:
+    meta.upbound.io/example-id: vpc/v1alpha1/vpc
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    ipRange: 10.10.10.0/24
+    name: example-project-network
+    region: nyc3

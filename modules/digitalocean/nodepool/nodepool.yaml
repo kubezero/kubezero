@@ -2,11 +2,7 @@
 apiVersion: kubernetes.digitalocean.crossplane.io/v1alpha1
 kind: NodePool
 metadata:
-  annotations:
-    meta.upbound.io/example-id: kubernetes/v1alpha1/nodepool
-  labels:
-    testing.upbound.io/example-name: bar
-  name: bar
+  name: digitalocean-nodepool
 spec:
   forProvider:
     clusterIdSelector:

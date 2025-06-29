@@ -7,6 +7,6 @@ spec:
   credentials:
     source: Secret
     secretRef:
-      name: example-creds
+      name: digitalocean-creds
       namespace: crossplane-system
       key: credentials

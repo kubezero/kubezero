@@ -4,4 +4,4 @@ kind: Provider
 metadata:
   name: provider-upjet-digitalocean
 spec:
-  package: crossplane-contrib/provider-upjet-digitalocean:v0.1.0
+  package: crossplane-contrib/provider-upjet-digitalocean:v0.3.0

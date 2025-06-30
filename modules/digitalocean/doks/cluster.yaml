@@ -1,0 +1,17 @@
+apiVersion: kubernetes.digitalocean.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  name: digitalocean-doks
+spec:
+  forProvider:
+    name: digitalocean-cluster
+    vpcUuidRef:
+      name: digitalocean-vpc
+    nodePool:
+      - name: worker-pool
+        nodeCount: 1
+        size: s-2vcpu-2gb
+    region: nyc3
+    version: 1.33.1-do.0
+  providerConfigRef:
+    name: digitalocean-providerconfig

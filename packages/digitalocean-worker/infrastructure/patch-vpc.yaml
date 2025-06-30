@@ -1,0 +1,11 @@
+apiVersion: vpc.digitalocean.crossplane.io/v1alpha1
+kind: VPC
+metadata:
+  annotations:
+  name: digitalocean-vpc
+spec:
+  forProvider:
+    ipRange: 10.10.20.0/24
+    region: nyc3
+  providerConfigRef:
+    name: worker-digitalocean-providerconfig

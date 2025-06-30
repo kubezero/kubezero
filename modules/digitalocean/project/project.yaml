@@ -1,0 +1,11 @@
+---
+apiVersion: project.digitalocean.crossplane.io/v1alpha1
+kind: Project
+metadata:
+  name: digitalocean-project
+spec:
+  forProvider:
+    description: A project to represent development resources.
+    environment: Development
+    name: playground
+    purpose: Web Application

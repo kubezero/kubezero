@@ -3,6 +3,8 @@ kind: Cluster
 metadata:
   name: digitalocean-doks
 spec:
+  providerConfigRef:
+    name: worker-digitalocean-providerconfig
   writeConnectionSecretToRef:
     name: worker-digitalocean-doks-kubeconfig
-    namespace: crossplane-system
+    namespace: kubezero

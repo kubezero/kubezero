@@ -7,3 +7,5 @@ spec:
   forProvider:
     ipRange: 10.10.20.0/24
     region: nyc3
+  providerConfigRef:
+    name: worker-digitalocean-providerconfig

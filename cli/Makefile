@@ -1,63 +1,115 @@
 # KubeZero CLI Makefile
 
-.PHONY: build clean test deps run-bootstrap help
+# Version information
+VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
+COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+DATE ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+
+# Build flags
+LDFLAGS = -s -w -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(DATE)
+
+# Binary name
+BINARY_NAME = kubezero
 
 # Default target
-help:
-	@echo "KubeZero CLI - Available targets:"
-	@echo "  build         - Build the kubezero binary"
-	@echo "  clean         - Remove built binaries"
-	@echo "  test          - Run tests"
-	@echo "  deps          - Download and tidy dependencies"
-	@echo "  run-bootstrap - Run bootstrap command directly"
-	@echo "  run-dev       - Run bootstrap with default config"
-	@echo "  status        - Check cluster status"
-	@echo "  cleanup       - Force cleanup cluster"
-	@echo "  install       - Install binary to /usr/local/bin"
-	@echo "  help          - Show this help message"
+.PHONY: all
+all: build
 
-# Build binary
-build: deps
-	@echo "Building kubezero CLI..."
-	go build -o kubezero .
-	@echo "✅ Build complete! Run './kubezero --help' to get started."
+# Build the binary
+.PHONY: build
+build:
+	@echo "Building $(BINARY_NAME) $(VERSION)"
+	go build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME) .
 
-# Clean build artifacts
-clean:
-	@echo "Cleaning build artifacts..."
-	rm -f kubezero
-	go clean
+# Build for all platforms
+.PHONY: build-all
+build-all: clean
+	@echo "Building for all platforms..."
+	@mkdir -p dist
+	GOOS=linux GOARCH=amd64 go build -ldflags="$(LDFLAGS)" -o dist/$(BINARY_NAME)-linux-amd64 .
+	GOOS=linux GOARCH=arm64 go build -ldflags="$(LDFLAGS)" -o dist/$(BINARY_NAME)-linux-arm64 .
+	GOOS=darwin GOARCH=amd64 go build -ldflags="$(LDFLAGS)" -o dist/$(BINARY_NAME)-darwin-amd64 .
+	GOOS=darwin GOARCH=arm64 go build -ldflags="$(LDFLAGS)" -o dist/$(BINARY_NAME)-darwin-arm64 .
+	GOOS=windows GOARCH=amd64 go build -ldflags="$(LDFLAGS)" -o dist/$(BINARY_NAME)-windows-amd64.exe .
+	@echo "Built binaries:"
+	@ls -la dist/
 
-# Run tests
+# Test the application
+.PHONY: test
 test:
-	@echo "Running tests..."
-	go test ./...
+	go test -v ./...
 
-# Download and tidy dependencies
-deps:
-	@echo "Downloading dependencies..."
-	go mod download
+# Run tests with coverage
+.PHONY: test-coverage
+test-coverage:
+	go test -v -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out -o coverage.html
+	@echo "Coverage report generated: coverage.html"
+
+# Run linting
+.PHONY: lint
+lint:
+	go vet ./...
+	@if command -v staticcheck >/dev/null 2>&1; then \
+		staticcheck ./...; \
+	else \
+		echo "staticcheck not installed, skipping..."; \
+		echo "Install with: go install honnef.co/go/tools/cmd/staticcheck@latest"; \
+	fi
+
+# Format code
+.PHONY: fmt
+fmt:
+	go fmt ./...
+
+# Tidy dependencies
+.PHONY: tidy
+tidy:
 	go mod tidy
 
-# Run bootstrap command directly (for development)
-run-bootstrap:
-	@echo "Running bootstrap command..."
-	go run . bootstrap
+# Install the binary to $GOPATH/bin or $HOME/go/bin
+.PHONY: install
+install:
+	go install -ldflags="$(LDFLAGS)" .
 
-# Install to system
-install: build
-	@echo "Installing kubezero to /usr/local/bin..."
-	sudo cp kubezero /usr/local/bin/
-	@echo "✅ kubezero installed! Run 'kubezero --help' from anywhere."
+# Clean build artifacts
+.PHONY: clean
+clean:
+	rm -f $(BINARY_NAME)
+	rm -f kubezero-*
+	rm -rf dist/
+	rm -f coverage.out coverage.html
 
-# Development: run with custom config
-run-dev:
-	go run . bootstrap --config ../bootstrap/k3d-bootstrap-cluster.yaml
+# Development commands
+.PHONY: dev
+dev: fmt lint test build
 
-# Quick status check
-status:
-	./kubezero status
+# Quick test with local mode
+.PHONY: test-local
+test-local: build
+	./$(BINARY_NAME) bootstrap --local --cloud aws --region eu-west-1
 
-# Quick cleanup
-cleanup:
-	./kubezero cleanup --force
+# Show version information
+.PHONY: version
+version:
+	@echo "Version: $(VERSION)"
+	@echo "Commit:  $(COMMIT)"
+	@echo "Date:    $(DATE)"
+
+# Help
+.PHONY: help
+help:
+	@echo "KubeZero CLI Build Commands:"
+	@echo ""
+	@echo "  make build          - Build the binary for current platform"
+	@echo "  make build-all      - Build binaries for all platforms"
+	@echo "  make test           - Run tests"
+	@echo "  make test-coverage  - Run tests with coverage report"
+	@echo "  make lint           - Run linting tools"
+	@echo "  make fmt            - Format code"
+	@echo "  make install        - Install binary to GOPATH/bin"
+	@echo "  make clean          - Clean build artifacts"
+	@echo "  make dev            - Run full development cycle (fmt, lint, test, build)"
+	@echo "  make test-local     - Build and test local bootstrap command"
+	@echo "  make version        - Show version information"
+	@echo "  make help           - Show this help message"

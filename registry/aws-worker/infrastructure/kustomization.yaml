@@ -1,0 +1,17 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../../modules/aws/eks/provider
+  - ../../../stacks/eks-cluster
+
+patches:
+  - path: patch-xeks.yaml
+    target:
+      kind: XEKS
+      name: aws-eks
+  - path: patch-xnetwork.yaml
+    target:
+      kind: XNetwork
+      name: aws-network

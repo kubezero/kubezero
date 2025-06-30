@@ -1,0 +1,23 @@
+---
+apiVersion: aws.platform.upbound.io/v1alpha1
+kind: XNetwork
+metadata:
+  name: aws-network
+spec:
+  parameters:
+    providerConfigName: management-provider-aws
+    region: eu-west-1
+    vpcCidrBlock: 192.168.0.0/16
+    subnets:
+      - availabilityZone: eu-west-1a
+        type: public
+        cidrBlock: 192.168.0.0/18
+      - availabilityZone: eu-west-1b
+        type: public
+        cidrBlock: 192.168.64.0/18
+      - availabilityZone: eu-west-1a
+        type: private
+        cidrBlock: 192.168.128.0/18
+      - availabilityZone: eu-west-1b
+        type: private
+        cidrBlock: 192.168.192.0/18

@@ -13,7 +13,7 @@ spec:
     - namespace: '*'
       server: '*'
   sourceRepos:
-    - https://github.com/kubezero/kubezero
+    - https://github.com/wazery/kubezero
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -27,7 +27,7 @@ metadata:
 spec:
   project: management
   source:
-    repoURL: https://github.com/kubezero/kubezero
+    repoURL: https://github.com/wazery/kubezero
     path: registry/management
     targetRevision: main
   destination:

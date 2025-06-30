@@ -1,0 +1,64 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: aws-worker
+spec:
+  description: Worker EKS cluster resources
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  destinations:
+    - namespace: '*'
+      server: '*'
+  sourceRepos:
+    - https://github.com/wazery/kubezero
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-worker
+  annotations:
+    argocd.argoproj.io/sync-wave: '100'
+    argocd.argoproj.io/depends-on: aws-provider
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: aws-worker-infrastructure
+  source:
+    repoURL: https://github.com/wazery/kubezero
+    path: registry/aws-worker/infrastructure
+    targetRevision: main
+  destination:
+    name: in-cluster
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-worker-applications
+  annotations:
+    argocd.argoproj.io/sync-wave: '100'
+    argocd.argoproj.io/depends-on: aws-provider
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: aws-worker
+  source:
+    repoURL: https://github.com/wazery/kubezero
+    path: registry/aws-worker/applications
+    targetRevision: main
+  destination:
+    # NOTE: Change the name according to your cluster.
+    name: aws-worker
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true

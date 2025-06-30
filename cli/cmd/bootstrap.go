@@ -47,9 +47,9 @@ The --local flag automates local development setup by:
 - Committing and pushing changes to your fork
 
 Examples:
-  kubezero bootstrap --cloud aws --region us-west-2
+  kubezero bootstrap --cloud aws --region eu-west-1
   kubezero bootstrap --interactive
-  kubezero bootstrap --local --cloud gcp --region us-central1
+  kubezero bootstrap --local --cloud aws --region eu-west-1
   kubezero bootstrap  # Will prompt for cloud provider selection`,
 	RunE: runBootstrap,
 }
@@ -58,7 +58,7 @@ func init() {
 	rootCmd.AddCommand(bootstrapCmd)
 	bootstrapCmd.Flags().StringVarP(&configPath, "config", "c", "../bootstrap/k3d-bootstrap-cluster.yaml", "Path to k3d cluster configuration file")
 	bootstrapCmd.Flags().StringVar(&cloudProvider, "cloud", "", "Cloud provider (aws, gcp)")
-	bootstrapCmd.Flags().StringVar(&region, "region", "", "Cloud region (e.g., us-west-2, us-central1)")
+	bootstrapCmd.Flags().StringVar(&region, "region", "", "Cloud region (e.g., eu-west-1, us-central1)")
 	bootstrapCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, "Force interactive mode even if flags are provided")
 	bootstrapCmd.Flags().BoolVar(&localMode, "local", false, "Automate local development setup (opens GitHub fork, updates configs, pushes to your fork)")
 }
@@ -1104,7 +1104,7 @@ func commitAndPushToFork(repoPath string) error {
 
 	// Push to fork using the current branch name
 	fmt.Printf("   📤 Pushing to fork (branch: %s)...\n", currentBranch)
-	
+
 	// First try to push, if it fails because the branch doesn't exist on remote, push with --set-upstream
 	pushCmd := exec.Command("git", "push", "fork", currentBranch)
 	pushCmd.Dir = repoPath
@@ -1125,6 +1125,7 @@ func commitAndPushToFork(repoPath string) error {
 	fmt.Println("   ✅ Successfully pushed to fork")
 	return nil
 }
+
 // getCurrentBranch gets the current git branch name with fallback handling
 func getCurrentBranch(repoPath string) (string, error) {
 	// Try git branch --show-current (newer git versions)

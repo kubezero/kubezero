@@ -8,11 +8,12 @@ import (
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Print the version of KubeZero CLI",
-	Long:  `Print the version information for KubeZero CLI.`,
+	Short: "Print the version information",
+	Long:  `Print detailed version information for KubeZero CLI including build details.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("KubeZero CLI v0.1.0")
-		fmt.Println("Built with Go")
+		fmt.Printf("KubeZero CLI %s\n", version)
+		fmt.Printf("Built from commit: %s\n", commit)
+		fmt.Printf("Build date: %s\n", date)
 	},
 }
 

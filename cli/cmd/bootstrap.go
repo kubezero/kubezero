@@ -937,10 +937,27 @@ func setupForkWorkflow(repoPath, githubUsername, forkRemoteURL string) error {
 }
 
 func addForkRemote(repoPath, forkRemoteURL string) error {
-	// Remove existing fork remote if it exists
-	exec.Command("git", "remote", "remove", "fork").Run()
+	// Check if fork remote already exists
+	checkCmd := exec.Command("git", "remote", "get-url", "fork")
+	checkCmd.Dir = repoPath
+	if existingOutput, err := checkCmd.CombinedOutput(); err == nil {
+		existingURL := strings.TrimSpace(string(existingOutput))
+		if existingURL == forkRemoteURL {
+			fmt.Printf("   ✅ Fork remote already exists with correct URL: %s\n", existingURL)
+			return nil
+		}
+		
+		// Remote exists but with different URL, remove it first
+		fmt.Println("   🔧 Updating existing fork remote...")
+		removeCmd := exec.Command("git", "remote", "remove", "fork")
+		removeCmd.Dir = repoPath
+		if output, err := removeCmd.CombinedOutput(); err != nil {
+			return fmt.Errorf("failed to remove existing fork remote: %w\nOutput: %s", err, output)
+		}
+	}
 
 	// Add fork remote
+	fmt.Printf("   ➕ Adding fork remote: %s\n", forkRemoteURL)
 	cmd := exec.Command("git", "remote", "add", "fork", forkRemoteURL)
 	cmd.Dir = repoPath
 	if output, err := cmd.CombinedOutput(); err != nil {

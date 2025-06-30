@@ -4,3 +4,4 @@ kind: Kustomization
 
 resources:
   - ./cluster-secret.yaml
+  - ../../../modules/digitalocean/doks

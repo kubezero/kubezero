@@ -968,6 +968,17 @@ func addForkRemote(repoPath, forkRemoteURL string) error {
 }
 
 func updateRepoURLsToFork(githubUsername string) error {
+	// Get the current branch to use as targetRevision
+	kubeZeroDir, err := filepath.Abs("../")
+	if err != nil {
+		return fmt.Errorf("failed to get kubezero directory path: %w", err)
+	}
+	
+	currentBranch, err := getCurrentBranch(kubeZeroDir)
+	if err != nil {
+		return fmt.Errorf("failed to get current branch: %w", err)
+	}
+	
 	forkRepoURL := fmt.Sprintf("https://github.com/%s/kubezero", githubUsername)
 
 	// Files to update
@@ -985,12 +996,13 @@ func updateRepoURLsToFork(githubUsername string) error {
 
 	for _, filePath := range filesToUpdate {
 		if fileExists(filePath) {
-			if err := updateRepoURLInFile(filePath, forkRepoURL); err != nil {
+			if err := updateRepoURLInFile(filePath, forkRepoURL, currentBranch); err != nil {
 				fmt.Printf("   ⚠️  Warning: Could not update %s: %v\n", filePath, err)
 			}
 		}
 	}
 
+	fmt.Printf("   ✅ Updated targetRevision to: %s\n", currentBranch)
 	return nil
 }
 
@@ -1008,7 +1020,7 @@ func findRegistryGitOpsFiles(registryDir string) ([]string, error) {
 	return files, err
 }
 
-func updateRepoURLInFile(filePath, newRepoURL string) error {
+func updateRepoURLInFile(filePath, newRepoURL, targetRevision string) error {
 	content, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
@@ -1023,6 +1035,10 @@ func updateRepoURLInFile(filePath, newRepoURL string) error {
 	for i, line := range lines {
 		if strings.Contains(line, "- https://github.com/kubezero/kubezero") {
 			lines[i] = strings.Replace(line, "https://github.com/kubezero/kubezero", newRepoURL, 1)
+		}
+		// Update targetRevision from "main" to current branch
+		if strings.Contains(line, "targetRevision: main") {
+			lines[i] = strings.Replace(line, "targetRevision: main", fmt.Sprintf("targetRevision: %s", targetRevision), 1)
 		}
 	}
 	newContent = strings.Join(lines, "\n")

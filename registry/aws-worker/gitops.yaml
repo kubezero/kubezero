@@ -12,7 +12,7 @@ spec:
     - namespace: '*'
       server: '*'
   sourceRepos:
-    - https://github.com/kubezero/kubezero
+    - https://github.com/wazery/kubezero
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -26,7 +26,7 @@ metadata:
 spec:
   project: aws-worker-infrastructure
   source:
-    repoURL: https://github.com/kubezero/kubezero
+    repoURL: https://github.com/wazery/kubezero
     path: registry/aws-worker/infrastructure
     targetRevision: main
   destination:
@@ -50,7 +50,7 @@ metadata:
 spec:
   project: aws-worker
   source:
-    repoURL: https://github.com/kubezero/kubezero
+    repoURL: https://github.com/wazery/kubezero
     path: registry/aws-worker/applications
     targetRevision: main
   destination:

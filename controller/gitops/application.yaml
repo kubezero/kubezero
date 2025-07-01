@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/wazery/kubezero
     path: controller
-    targetRevision: main
+    targetRevision: w-cli
   destination:
     name: in-cluster
     namespace: kubezero
@@ -38,7 +38,7 @@ spec:
   source:
     repoURL: https://github.com/wazery/kubezero
     path: registry
-    targetRevision: main
+    targetRevision: w-cli
     directory:
       recurse: true
       include: '*/gitops.yaml'

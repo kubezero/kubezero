@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: aws-management
+  name: aws-management-infrastructure
 spec:
   description: Management EKS cluster resources
   clusterResourceWhitelist:

@@ -946,7 +946,7 @@ func addForkRemote(repoPath, forkRemoteURL string) error {
 			fmt.Printf("   ✅ Fork remote already exists with correct URL: %s\n", existingURL)
 			return nil
 		}
-		
+
 		// Remote exists but with different URL, remove it first
 		fmt.Println("   🔧 Updating existing fork remote...")
 		removeCmd := exec.Command("git", "remote", "remove", "fork")

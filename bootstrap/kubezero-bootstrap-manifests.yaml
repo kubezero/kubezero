@@ -41,6 +41,7 @@ spec:
       server: https://kubernetes.default.svc
   sourceRepos:
     - https://github.com/wazery/kubezero
+    - https://github.com/*/kubezero
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application

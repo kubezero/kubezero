@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: aws-worker
+  name: aws-worker-infrastructure
 spec:
   description: Worker EKS cluster resources
   clusterResourceWhitelist:

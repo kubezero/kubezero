@@ -1,0 +1,230 @@
+name: Release KubeZero CLI
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers on version tags like v1.0.0, v1.2.3, etc.
+  workflow_dispatch:  # Allows manual trigger
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            suffix: linux-amd64
+          - goos: linux
+            goarch: arm64
+            suffix: linux-arm64
+          - goos: darwin
+            goarch: amd64
+            suffix: darwin-amd64
+          - goos: darwin
+            goarch: arm64
+            suffix: darwin-arm64
+          - goos: windows
+            goarch: amd64
+            suffix: windows-amd64.exe
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache-dependency-path: cli/go.sum
+
+      - name: Get dependencies
+        working-directory: ./cli
+        run: go mod download
+
+      - name: Build binary
+        working-directory: ./cli
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          mkdir -p ../dist
+          BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          COMMIT_SHA=${GITHUB_SHA::8}
+          VERSION=${{ github.ref_name }}
+          go build \
+            -ldflags="-s -w -X main.version=${VERSION} -X main.commit=${COMMIT_SHA} -X main.date=${BUILD_DATE}" \
+            -o ../dist/kubezero-${{ matrix.suffix }} .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: kubezero-${{ matrix.suffix }}
+          path: dist/kubezero-${{ matrix.suffix }}
+
+  release:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: ./artifacts
+
+      - name: Prepare release assets
+        run: |
+          mkdir -p release-assets
+          find ./artifacts -name "kubezero-*" -type f -exec cp {} release-assets/ \;
+          ls -la release-assets/
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          echo "# KubeZero CLI ${{ github.ref_name }}" > release-notes.md
+          echo "" >> release-notes.md
+          echo "## 🚀 Features" >> release-notes.md
+          echo "- Modern Go-based CLI for bootstrapping KubeZero clusters" >> release-notes.md
+          echo "- Interactive cloud provider and region selection" >> release-notes.md
+          echo "- Automated local development workflow with GitHub fork integration" >> release-notes.md
+          echo "- Support for AWS and GCP cloud providers" >> release-notes.md
+          echo "- Dynamic package preparation and configuration patching" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "## 📦 Installation" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "### Linux/macOS" >> release-notes.md
+          echo '```bash' >> release-notes.md
+          echo "# Download the appropriate binary for your platform" >> release-notes.md
+          echo "wget https://github.com/kubezero/kubezero/releases/download/${{ github.ref_name }}/kubezero-linux-amd64" >> release-notes.md
+          echo "chmod +x kubezero-linux-amd64" >> release-notes.md
+          echo "sudo mv kubezero-linux-amd64 /usr/local/bin/kubezero" >> release-notes.md
+          echo '```' >> release-notes.md
+          echo "" >> release-notes.md
+          echo "### Windows" >> release-notes.md
+          echo "Download `kubezero-windows-amd64.exe` and add it to your PATH." >> release-notes.md
+          echo "" >> release-notes.md
+          echo "## 🛠️ Usage" >> release-notes.md
+          echo "" >> release-notes.md
+          echo '```bash' >> release-notes.md
+          echo "# Interactive bootstrap" >> release-notes.md
+          echo "kubezero bootstrap" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "# Bootstrap with specific cloud provider and region" >> release-notes.md
+          echo "kubezero bootstrap --cloud aws --region eu-west-1" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "# Local development mode (includes GitHub fork automation)" >> release-notes.md
+          echo "kubezero bootstrap --local --cloud aws --region eu-west-1" >> release-notes.md
+          echo '```' >> release-notes.md
+          echo "" >> release-notes.md
+          echo "## 📋 Available Binaries" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "| Platform | Architecture | Binary |" >> release-notes.md
+          echo "|----------|--------------|--------|" >> release-notes.md
+          echo "| Linux | AMD64 | kubezero-linux-amd64 |" >> release-notes.md
+          echo "| Linux | ARM64 | kubezero-linux-arm64 |" >> release-notes.md
+          echo "| macOS | AMD64 (Intel) | kubezero-darwin-amd64 |" >> release-notes.md
+          echo "| macOS | ARM64 (M1/M2) | kubezero-darwin-arm64 |" >> release-notes.md
+          echo "| Windows | AMD64 | kubezero-windows-amd64.exe |" >> release-notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: KubeZero CLI ${{ github.ref_name }}
+          body_path: release-notes.md
+          files: release-assets/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-container:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/kubezero-cli
+          tags: |
+            type=ref,event=tag
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+
+      - name: Create Dockerfile
+        run: |
+          cat > Dockerfile << 'EOF'
+          FROM alpine:3.18
+          
+          # Install required packages
+          RUN apk add --no-cache \
+              git \
+              curl \
+              ca-certificates \
+              bash \
+              openssh-client
+
+          # Install k3d
+          RUN curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+
+          # Install kubectl
+          RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+              install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \
+              rm kubectl
+
+          # Copy the kubezero CLI binary
+          COPY dist/kubezero-linux-amd64 /usr/local/bin/kubezero
+          RUN chmod +x /usr/local/bin/kubezero
+
+          # Create a non-root user
+          RUN adduser -D -s /bin/bash kubezero
+          USER kubezero
+          WORKDIR /home/kubezero
+
+          # Set entrypoint
+          ENTRYPOINT ["/usr/local/bin/kubezero"]
+          CMD ["--help"]
+          EOF
+
+      - name: Download Linux AMD64 binary
+        uses: actions/download-artifact@v3
+        with:
+          name: kubezero-linux-amd64
+          path: ./dist
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

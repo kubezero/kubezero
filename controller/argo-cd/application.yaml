@@ -11,9 +11,9 @@ metadata:
 spec:
   project: controller
   source:
-    repoURL: https://github.com/kubezero/kubezero
+    repoURL: https://github.com/wazery/kubezero
     path: controller/argo-cd
-    targetRevision: main
+    targetRevision: w-cli
   destination:
     name: in-cluster
     namespace: kubezero

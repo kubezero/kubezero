@@ -24,7 +24,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: gcp-management-infrastructure
+  project: gcp-management
   source:
     repoURL: https://github.com/kubezero/kubezero
     path: registry/gcp-management/infrastructure

@@ -24,7 +24,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: virtual-worker-infrastructure
+  project: virtual-worker
   source:
     repoURL: https://github.com/kubezero/kubezero
     path: registry/virtual-worker/infrastructure

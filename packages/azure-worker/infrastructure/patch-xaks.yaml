@@ -1,0 +1,11 @@
+---
+apiVersion: azure.platform.upbound.io/v1alpha1
+kind: XAKS
+metadata:
+  name: azure-aks
+spec:
+  parameters:
+    providerConfigName: worker-provider-azure
+  writeConnectionSecretToRef:
+    name: worker-azure-aks-kubeconfig
+    namespace: crossplane-system

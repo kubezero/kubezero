@@ -1,0 +1,64 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: azure-worker
+spec:
+  description: Worker EKS cluster resources
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  destinations:
+    - namespace: '*'
+      server: '*'
+  sourceRepos:
+    - https://github.com/kubezero/kubezero
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: azure-worker
+  annotations:
+    argocd.argoproj.io/sync-wave: '100'
+    argocd.argoproj.io/depends-on: azure-provider
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: azure-worker
+  source:
+    repoURL: https://github.com/kubezero/kubezero
+    path: registry/azure-worker/infrastructure
+    targetRevision: main
+  destination:
+    name: in-cluster
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: azure-worker-applications
+  annotations:
+    argocd.argoproj.io/sync-wave: '100'
+    argocd.argoproj.io/depends-on: azure-provider
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: azure-worker
+  source:
+    repoURL: https://github.com/kubezero/kubezero
+    path: registry/azure-worker/applications
+    targetRevision: main
+  destination:
+    # NOTE: Change the name according to your cluster.
+    name: azure-worker
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true

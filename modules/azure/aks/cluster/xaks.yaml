@@ -1,0 +1,19 @@
+---
+apiVersion: azure.platform.upbound.io/v1alpha1
+kind: XAKS
+metadata:
+  name: azure-aks
+  annotations:
+    argocd.argoproj.io/sync-wave: '0'
+spec:
+  parameters:
+    id: azure-aks
+    providerConfigName: provider-aws
+    nodes:
+      count: 1
+      instanceType: Standard_B2s
+    region: westus
+    version: "1.31"
+  writeConnectionSecretToRef:
+    name: azure-aks-kubeconfig
+    namespace: crossplane-system

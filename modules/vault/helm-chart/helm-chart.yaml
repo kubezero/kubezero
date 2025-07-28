@@ -1,0 +1,23 @@
+---
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: vault
+name: vault
+repo: https://helm.releases.hashicorp.com
+version: 0.28.0
+releaseName: vault
+namespace: vault
+valuesInline:
+  server:
+    enabled: true
+    # Basic configuration - can be customized per stack
+    ha:
+      enabled: false  # Single instance for simplicity
+    dev:
+      enabled: false  # Production mode
+  ui:
+    enabled: true
+  # Create the namespace if it doesn't exist
+  global:
+    namespace: vault 

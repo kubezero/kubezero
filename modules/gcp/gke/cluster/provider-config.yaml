@@ -1,0 +1,15 @@
+---
+apiVersion: gcp.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: provider-gcp
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  projectID: "" # REPLACE: set your GCP project ID
+  credentials:
+    source: Secret
+    secretRef:
+      namespace: crossplane-system
+      name: gcp-creds
+      key: creds

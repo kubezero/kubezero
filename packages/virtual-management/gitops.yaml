@@ -17,7 +17,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: virtual-management-infrastructure
+  name: virtual-management
   annotations:
     argocd.argoproj.io/sync-wave: '100'
     argocd.argoproj.io/depends-on: vcluster

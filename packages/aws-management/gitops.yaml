@@ -24,7 +24,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: aws-management-infrastructure
+  project: aws-management
   source:
     repoURL: https://github.com/kubezero/kubezero
     path: registry/aws-management/infrastructure

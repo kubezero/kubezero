@@ -6,4 +6,5 @@ resources:
   - ./namespace
   - ./gitops
   - ./crossplane/application.yaml
-  # - ./argo-cd/application.yaml
+  - ./argo-cd/application.yaml
+  - ./external-secrets/application.yaml

@@ -5,35 +5,58 @@ on:
   pull_request:
     branches:
       - "*"
+  push:
+    branches:
+      - main
 
 jobs:
-  pre-commit:
+  lint:
+    name: Lint & Validate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
 
       - name: Install asdf & tools
-        uses: asdf-vm/actions/install@v4
+        uses: asdf-vm/actions/install@v4.0.1
 
-      - name: Run pre-commit hooks
+      - name: Install kustomize
         run: |
-          pre-commit run --all-files
+          curl -sLo kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz
+          tar -xzf kustomize.tar.gz
+          sudo mv kustomize /usr/local/bin/
 
-      - name: Run gitleaks
-        run: |
-          gitleaks detect --source . --no-git --redact
+      - name: yamllint
+        run: yamllint .
 
-      - name: Run yamllint
-        run: |
-          yamllint .
+      - name: gitleaks
+        run: gitleaks detect --source . --no-git --redact
 
-      - name: Run kubeconform linter
+      - name: kubeconform (kustomize build)
         run: |
           chmod +x .hooks/kubeconform.sh
-          ./.hooks/kubeconform.sh || exit 1
+          .hooks/kubeconform.sh
 
-      - name: Run kube-score static analysis
+      - name: kube-score (kustomize build)
         run: |
           chmod +x .hooks/kube-score.sh
           ./.hooks/kube-score.sh || exit 1
+
+  cli-build:
+    name: CLI Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6.0.2
+
+      - name: Set up Go
+        uses: actions/setup-go@v6.4.0
+        with:
+          go-version-file: cli/go.mod
+          cache-dependency-path: cli/go.sum
+
+      - name: Build CLI
+        run: cd cli && go build ./...
+
+      - name: Vet CLI
+        run: cd cli && go vet ./...

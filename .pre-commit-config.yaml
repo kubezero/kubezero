@@ -6,26 +6,28 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
 
-  - repo: local
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.32.0
     hooks:
-      - id: kubeconform
-        name: kubeconform linter
-        entry: .hooks/kubeconform.sh
-        language: script
-        files: \.ya?ml$
-
-      - id: kube-score
-        name: kube-score static analysis
-        entry: .hooks/kube-score.sh
-        language: script
-        files: \.ya?ml$
+      - id: yamllint
 
   - repo: https://github.com/zricethezav/gitleaks
     rev: v8.18.0
     hooks:
       - id: gitleaks
 
-  - repo: https://github.com/adrienverge/yamllint
-    rev: v1.32.0
+  - repo: local
     hooks:
-      - id: yamllint
+      - id: kubeconform
+        name: kubeconform (kustomize build)
+        entry: .hooks/kubeconform.sh
+        language: script
+        pass_filenames: false
+        always_run: true
+
+      - id: kube-score
+        name: kube-score (kustomize build)
+        entry: .hooks/kube-score.sh
+        language: script
+        pass_filenames: false
+        always_run: true
